@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="online_repair_request" name="Repair Order">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure oe_empty">
+                <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                    <div class="container">
+                        <form action="/repairorder/submit" method="post" enctype="multipart/form-data"
+                              class="o_mark_required" data-mark="*" data-model_name="" data-success-page="">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="s_website_form_rows row s_col_no_bgcolor">
+                                <div class="form-group col-12 s_website_form_field s_website_form_required"
+                                     data-type="char" data-name="Field">
+                                    <div class="row s_col_no_resize s_col_no_bgcolor">
+                                        <label class="col-form-label col-sm-auto s_website_form_label"
+                                               style="width: 200px" for="partner_id">
+                                            <span class="s_website_form_label_content">Customer:</span>
+                                            <span class="s_website_form_mark">*</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <select id="partner_id" name="partner_id"
+                                                    t-attf-class="form-control s_website_form_input" required="1">
+                                                <t t-foreach="partners or []" t-as="partner">
+                                                    <option t-att-value="partner.id">
+                                                        <t t-esc="partner.name"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-12 s_website_form_field s_website_form_required"
+                                     data-type="char" data-name="Field">
+                                    <div class="row s_col_no_resize s_col_no_bgcolor">
+                                        <label class="col-form-label col-sm-auto s_website_form_label"
+                                               style="width: 200px" for="description">
+                                            <span class="s_website_form_label_content">Repair Description:</span>
+                                            <span class="s_website_form_mark">*</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <input id="description" type="text"
+                                                   class="form-control s_website_form_input" name="description"
+                                                   required="1"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-12 s_website_form_field s_website_form_required"
+                                     data-type="char" data-name="Field">
+                                    <div class="row s_col_no_resize s_col_no_bgcolor">
+                                        <label class="col-form-label col-sm-auto s_website_form_label"
+                                               style="width: 200px" for="product_id">
+                                            <span class="s_website_form_label_content">Product to Repair:</span>
+                                            <span class="s_website_form_mark">*</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <select id="product_id" name="product_id"
+                                                    t-attf-class="form-control s_website_form_input"
+                                                    required="1">
+                                                <t t-foreach="product_id or []" t-as="product_id">
+                                                    <option t-att-value="product_id.id">
+                                                        <t t-esc="product_id.name"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-12 s_website_form_field s_website_form_required"
+                                     data-type="char" data-name="Field">
+                                    <div class="row s_col_no_resize s_col_no_bgcolor">
+                                        <label class="col-form-label col-sm-auto s_website_form_label"
+                                               style="width: 200px" for="quantity">
+                                            <span class="s_website_form_label_content">Quantity:</span>
+                                            <span class="s_website_form_mark">*</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <input id="quantity" type="number" class="form-control s_website_form_input"
+                                                   name="quantity" required="1" min="1"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                    <div style="width: 200px;" class="s_website_form_label"/>
+                                    <button type="submit" class="btn btn-primary" name="submit">Repair</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+    <template id="repair_order_tree_view" name="Repair Order">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container" style="margin-top: 20px;">
+
+                    <a href="/repair_order/form">
+                        <button type="button" class="btn btn-primary flex-grow-1">Create</button>
+                    </a>
+
+                    <div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Sl No.</th>
+                                    <th>Repair Reference</th>
+                                    <th>Customer</th>
+                                    <th>Product</th>
+                                    <th>Repair Description</th>
+                                    <th>Quantity</th>
+                                    <th>State</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="s" t-value="1"/>
+                                <tr t-foreach="orders" t-as="i">
+                                    <td>
+                                        <span t-esc="s"/>
+                                        <t t-set="s" t-value="s+1"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="i['name']"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="i['partner_id'][1]"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="i['product_id'][1]"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="i['description']"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="i['product_qty']"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="i['state']"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="repair_order_form_success" name="Repair Order">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container" style="margin-top: 20px;">
+                    <div class="col-md-12">
+                        <div class="alert alert-success">
+                            Repair Order is successfully created.
+                        </div>
+                    </div>
+                    <a href="/repairorder">Back To Orders</a>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
